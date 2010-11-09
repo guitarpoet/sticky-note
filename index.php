@@ -16,16 +16,20 @@
 	<script type="text/javascript" src="js/jquery-ui-1.8.6.js"></script>
 	<script type="text/javascript" src="js/jquery.stickynote.js"></script>
 	<script type="text/javascript">
+		var currentPage = 0;
 		$(function() {
-			$("#content").stickynote({
-				size: 'large',
-				event: 'dblclick'
+			$('#click').click(function(){
+				$.get('notes.php', {
+					page: currentPage
+				},function(data) {
+				}, 'json');
 			});
+			$('#click').stickynote();
 		});
 	</script>
 </head>
 <body>
-	<div id="content">
-	</div>
+	<button id="click">Click</button>
+	<div id="content"></div>
 </body>
 </html>
