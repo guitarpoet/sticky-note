@@ -3,67 +3,86 @@
 		var opts = $.extend({}, $.fn.stickynote.defaults, options);
 		return this.each(function() {
 			$this = $(this);
-			var o = $.meta ? $.extend({}, opts, $this.data()) : opts;
-			switch(o.event){
-				case 'dblclick':
-					$this.dblclick(function(e){$.fn.stickynote.createNote(o);})
-					break;
-				case 'click':
-					$this.click(function(e){$.fn.stickynote.createNote(o);})
-					break;
-			}		
+			$.fn.stickynote.createNote($.meta ? $.extend({}, opts, $this.data()) : opts);
 		});
 	};
 	$.fn.stickynote.defaults = {
-		size: 'small',
-		event: 'click',
+		size: 'large',
 		color: '#000000',
-		date: new Date(),
+		time: new Date(),
 		author: 'nobody'
 	};
 	$.fn.stickynote.createNote = function(o) {
-		var _note_content = $(document.createElement('textarea'));
-		var _div_note =	$(document.createElement('div')).addClass('jStickyNote').css('cursor','move');
+		var content = $(document.createElement('textarea'));
+		var note = $(document.createElement('div')).addClass('jStickyNote').css('cursor','move');
 		if(!o.text){
-			_div_note.append(_note_content);
-			var _div_create = $(document.createElement('div')).addClass('jSticky-create').attr('title','Create Sticky Note');
-			_div_create.click(function(e){
-				var _p_note_text = $(document.createElement('p')).css('color',o.color).html($(this).parent().find('textarea').val());
-				$(this).parent().find('textarea').before(_p_note_text).remove(); 
-				$(this).remove();						
+			note.append(content);
+			var create_note = $(document.createElement('div')).addClass('jSticky-create').attr('title','Create Sticky Note');
+			create_note.click(function(){
+				var message = $(this).parent().find('textarea').val();
+				$.get('notes.php', {
+					author: o.author,
+					message: message,
+				       	time: $.format.date(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+					type: 'create'
+				}, function(data){
+					var note_textarea = $(document.createElement('p')).css('color',o.color).html(message);
+					create_note.parent().find('textarea').before(note_textarea).remove(); 
+					create_note.parent().data('id', data.id);
+					console.info($.format.date(new Date(), 'yyyy-MM-dd HH:mm:ss'));
+					note_textarea.before($(document.createElement('p')).addClass('title').html(o.author + '<br> (' + $.format.date(new Date(), 'yyyy-MM-dd HH:mm:ss') + ')'));
+					create_note.remove();						
+				}, 'json')
 			})
 		}	
-		else
-			_div_note.append('<p style="color:'+o.color+'">'+o.text+'</p>');					
+		else {
+			note.append($(document.createElement('p')).addClass('title').html(o.author + '<br> (' + o.time + ')'));
+			note.append($(document.createElement('p')).css({color: o.color}).text(o.text));					
+		}
 		
-		var _div_delete = $(document.createElement('div')).addClass('jSticky-delete');
+		var delete_note = $(document.createElement('div')).addClass('jSticky-delete');
 		
-		_div_delete.click(function(e){
-			$(this).parent().remove();
+		delete_note.click(function(e){
+			var id = $(this).parent().data('id');
+			$.get('notes.php', {
+				id: id, 
+				type: 'delete'
+			}, function(){
+				delete_note.parent().remove();
+			})
 		})
 		
-		var _div_wrap = $(document.createElement('div')).css({'position':'absolute','top':'0','left':'0'})
-			.append(_div_note).append(_div_delete).append(_div_create);	
+		var note_wrap = $(document.createElement('div')).css({'position':'absolute','top':'0','left':'0'})
+			.append(note).append(delete_note).append(create_note);	
 		switch(o.size){
 			case 'large':
-				_div_wrap.addClass('jSticky-large');
+				note_wrap.addClass('jSticky-large');
 				break;
 			case 'small':
-				_div_wrap.addClass('jSticky-medium');
+				note_wrap.addClass('jSticky-medium');
 				break;
 		}		
 		if(o.containment){
-			_div_wrap.draggable({ containment: '#'+o.containment, scroll: false ,start: function(event, ui) {
+			note_wrap.draggable({ containment: '#'+o.containment, scroll: false ,start: function(event, ui) {
 				if(o.ontop)
 					$(this).parent().append($(this));
 			}});	
 		}	
 		else{
-			_div_wrap.draggable({ scroll: false ,start: function(event, ui) {
+			var left = Math.random(1)*$('body').width() - 245;
+			var top = Math.random(1) * $('body').height() - 248;
+			if(!o.text) {
+				left = ($('body').width() - 225) / 2;
+				top = ($('body').height() - 228) / 2;
+			}
+			note_wrap.draggable({ scroll: false ,start: function(event, ui) {
 				if(o.ontop)
 					$(this).parent().append($(this));
-			}});	
+			}}).css('left', left < 0? 20 : left).css('top', top < 0? 20 : top);
 		}
-		$('#content').append(_div_wrap);
+		note_wrap.data('id', o.id);
+		$('#content').append(note_wrap);
+		if(!o.text)
+			note_wrap.find('textarea').focus();
 	};
 })(jQuery);

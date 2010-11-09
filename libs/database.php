@@ -10,7 +10,8 @@
 			'type' => 'entity',
 			'fields' => array(
 				'author',
-				'messag'
+				'message',
+				'time'
 			)
 		),
 		'list_notes' => array(

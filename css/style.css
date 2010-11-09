@@ -19,21 +19,26 @@
 	position:absolute;
 	cursor:pointer;
 }
+
 .jSticky-medium .jStickyNote textarea, .jSticky-medium .jStickyNote p{
 	font-size: 14px;
 	font-weight:bold;
-	height:115px;
+	height:105px;
 }
 .jSticky-large .jStickyNote textarea, .jSticky-large .jStickyNote p{
-	height:160px;
-	font-size: 16px;
+	height:150px;
+	font-size: 14px;
+}
+.jStickyNote p.title {
+	height: auto;
+	font-weight:bold;
 }
 .jStickyNote textarea{
 	width:75%;
 	background-color:transparent;
 	border:none;
-	font-family: 'Comic Sans MS',Textile,cursive;
-	font-size:16px;
+	font-family: Helvetica, Arial,Textile,cursive;
+	font-size:14px;
 	overflow:hidden;
 	color:#999;
 	padding:0px;
@@ -42,9 +47,9 @@
 	resize:none;
 }
 .jStickyNote p{
-	font-family: 'Comic Sans MS',Textile,cursive;
+	font-family: Helvetica, Arial,Textile,cursive;
 	color:#444;
-	margin:15px 0px 0px 24px;
+	margin:15px 0px 0px 15px;
 	overflow:hidden;
 	width:75%;
 	float:left;

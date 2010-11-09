@@ -14,22 +14,43 @@
 	<script type="text/javascript"></script>
 	<script type="text/javascript" src="js/jquery-1.4.2.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.6.js"></script>
+	<script type="text/javascript" src="js/jquery.format-1.1.js"></script>
 	<script type="text/javascript" src="js/jquery.stickynote.js"></script>
 	<script type="text/javascript">
 		var currentPage = 0;
 		$(function() {
-			$('#click').click(function(){
+			function createNote() {
+			}
+			function getNotes() {
 				$.get('notes.php', {
 					page: currentPage
 				},function(data) {
+					currentPage++;
+					$(data.results).each(function(){
+						$('#content').stickynote({
+							text: this.message,
+							author: this.author,
+							time: this.time,
+							id: this.id
+						});
+					});
 				}, 'json');
+			}
+			$('#more_note').click(function(){
+				getNotes();
 			});
-			$('#click').stickynote();
+			$('#create_note').click(function(){
+				$('#content').stickynote({
+					author: 'Jack'
+				});
+			});
+			getNotes();
 		});
 	</script>
 </head>
 <body>
-	<button id="click">Click</button>
+	<button id="more_note">More notes</button>
+	<button id="create_note">Create note</button>
 	<div id="content"></div>
 </body>
 </html>

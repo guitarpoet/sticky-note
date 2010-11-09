@@ -105,6 +105,7 @@
 				$db = get_db();
 				$stmt = $db->prepare($query);
 				debug($query);
+				debug($id);
 				$stmt->bind_param('i', $id);
 				$result = $stmt->execute();
 				$stmt->close();
@@ -147,6 +148,7 @@
 				$db = get_db();
 				$stmt = $db->prepare($query);
 				debug($query);
+				debug($values);
 				$stmt->bind_args($values);
 				$result = $stmt->execute();
 				$id = $stmt->insert_id;
