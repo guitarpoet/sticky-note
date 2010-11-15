@@ -44,12 +44,14 @@
 		
 		delete_note.click(function(e){
 			var id = $(this).parent().data('id');
-			$.get('notes.php', {
-				id: id, 
-				type: 'delete'
-			}, function(){
-				delete_note.parent().remove();
-			})
+			if(!$.fn.stickynote.beforeDelete || $.fn.stickynote.beforeDelete(id)) {
+				$.get('notes.php', {
+					id: id, 
+					type: 'delete'
+				}, function(){
+					delete_note.parent().remove();
+				})
+			}
 		})
 		
 		var note_wrap = $(document.createElement('div')).css({'position':'absolute','top':'0','left':'0'})

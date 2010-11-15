@@ -21,6 +21,9 @@
 		$(function() {
 			function createNote() {
 			}
+			$.fn.stickynote.beforeDelete = function(id) {
+				return confirm("Are you OK?!");
+			}
 			function getNotes() {
 				$.get('notes.php', {
 					page: currentPage
@@ -52,5 +55,8 @@
 	<button id="more_note">More notes</button>
 	<button id="create_note">Create note</button>
 	<div id="content"></div>
+	<div id="confirm">
+		<h1>Hello</h1>
+	</div>
 </body>
 </html>
